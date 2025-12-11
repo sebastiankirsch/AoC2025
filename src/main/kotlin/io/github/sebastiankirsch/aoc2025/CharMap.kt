@@ -10,11 +10,14 @@ open class CharMap(val chars: Array<CharArray>) {
         }
     }
 
-    fun charAt(point: Pair<Int, Int>): Char {
+    fun nullableCharAt(point: Pair<Int, Int>): Char? {
         if (!isWithinBounds(point))
-            throw ArrayIndexOutOfBoundsException("Point ${point.first},${point.second} is out of bounds!")
+            return null
         return chars[point.second][point.first]
     }
+
+    fun charAt(point: Pair<Int, Int>): Char = nullableCharAt(point)
+        ?: throw ArrayIndexOutOfBoundsException("Point ${point.first},${point.second} is out of bounds!")
 
     fun setChar(point: Pair<Int, Int>, char: Char) {
         if (!isWithinBounds(point))
@@ -33,6 +36,16 @@ open class CharMap(val chars: Array<CharArray>) {
             point.first - 1 to point.second,
             point.first - 1 to point.second - 1,
         ).filter { isWithinBounds(it) }
+    }
+
+    fun findChar(char: Char): Pair<Int, Int> {
+        (0..<chars.size).forEach { y ->
+            (0..<chars[0].size).forEach { x ->
+                if (chars[y][x] == char)
+                    return x to y
+            }
+        }
+        throw RuntimeException()
     }
 
     private fun isWithinBounds(point: Pair<Int, Int>): Boolean {

@@ -1,0 +1,43 @@
+package io.github.sebastiankirsch.aoc2025
+
+import org.junit.jupiter.api.Assertions.*
+import kotlin.test.Test
+
+class Day7Test {
+
+    val testSubject = Day7(
+        """
+            .......S.......
+            ...............
+            .......^.......
+            ...............
+            ......^.^......
+            ...............
+            .....^.^.^.....
+            ...............
+            ....^.^...^....
+            ...............
+            ...^.^...^.^...
+            ...............
+            ..^...^.....^..
+            ...............
+            .^.^.^.^.^...^.
+            ...............""".trim()
+        .lines().map { it.trim().toCharArray() }.toTypedArray()
+    )
+
+    @Test
+    fun `example of part I`() {
+        val result = testSubject.beamSplits()
+
+        assertEquals(21, result)
+    }
+
+    @Test
+    fun `example of part II`() {
+        val result = testSubject.timeLines()
+
+        assertEquals(40, result)
+    }
+
+}
