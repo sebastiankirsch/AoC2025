@@ -8,15 +8,12 @@ class Day6Test {
     @Test
     fun examplePart1() {
         val result = Day6(
-            listOf(
-                listOf(123, 328, 51, 64),
-                listOf(
-                    45, 64, 387, 23
-                ), listOf(
-                    6, 98, 215, 314
-                )
+            arrayOf(
+                intArrayOf(123, 328, 51, 64),
+                intArrayOf(45, 64, 387, 23),
+                intArrayOf(6, 98, 215, 314)
             ),
-            listOf('*', '+', '*', '+')
+            arrayOf('*', '+', '*', '+')
         ).grandTotal()
 
         assertEquals(4277556L, result)

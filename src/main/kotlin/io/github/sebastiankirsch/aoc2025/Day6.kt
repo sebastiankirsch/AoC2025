@@ -3,7 +3,7 @@ package io.github.sebastiankirsch.aoc2025
 import java.util.Scanner
 
 fun main() {
-    val input = with(scannerForInputOf(object {}.javaClass)) {
+    val humanInput = with(scannerForInputOf(object {}.javaClass)) {
         val numbers = mutableListOf<List<Int>>().apply {
             while (hasNextInt()) {
                 with(Scanner(nextLine())) {
@@ -20,16 +20,20 @@ fun main() {
             while (hasNext()) {
                 add(next()[0])
             }
+        }.toTypedArray()
+
+        val transformedNumbers = Array(operations.size) { i ->
+            IntArray(numbers.size) { j -> numbers[j][i]}
         }
 
-        numbers to operations
+        transformedNumbers to operations
     }
 
-    val day6 = Day6(input.first, input.second)
+    val day6 = Day6(humanInput.first, humanInput.second)
     println("Grand total: ${day6.grandTotal()}")
 }
 
-class Day6(val numbers: List<List<Int>>, val operations: List<Char>) {
+class Day6(val numbers: Array<IntArray>, val operations: Array<Char>) {
     fun grandTotal(): Long {
         var grandTotal = 0L
 
