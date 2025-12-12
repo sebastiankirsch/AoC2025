@@ -1,10 +1,13 @@
 package io.github.sebastiankirsch.aoc2025
 
 open class CharMap(val chars: Array<CharArray>) {
+    override fun toString(): String {
+        return chars.joinToString(separator = "\n") { it.concatToString() }
+    }
 
     fun forEach(action: (Pair<Int, Int>, Char) -> Unit) {
-        (0..chars.size - 1).forEach { y ->
-            (0..chars[0].size - 1).forEach { x ->
+        (0..<chars.size).forEach { y ->
+            (0..<chars[0].size).forEach { x ->
                 action(Pair(x, y), chars[y][x])
             }
         }
@@ -35,6 +38,15 @@ open class CharMap(val chars: Array<CharArray>) {
             point.first - 1 to point.second + 1,
             point.first - 1 to point.second,
             point.first - 1 to point.second - 1,
+        ).filter { isWithinBounds(it) }
+    }
+
+    fun fourNeighborsOf(point: Pair<Int, Int>): List<Pair<Int, Int>> {
+        return listOf(
+            point.first + 1 to point.second,
+            point.first - 1 to point.second,
+            point.first to point.second + 1,
+            point.first to point.second - 1,
         ).filter { isWithinBounds(it) }
     }
 
