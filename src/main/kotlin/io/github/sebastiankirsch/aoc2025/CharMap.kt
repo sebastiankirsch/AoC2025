@@ -60,7 +60,7 @@ open class CharMap(val chars: Array<CharArray>) {
         throw RuntimeException()
     }
 
-    private fun isWithinBounds(point: Pair<Int, Int>): Boolean {
+    fun isWithinBounds(point: Pair<Int, Int>): Boolean {
         return (point.first > -1 && point.second > -1 && point.second < chars.size && point.first < chars[0].size)
     }
 

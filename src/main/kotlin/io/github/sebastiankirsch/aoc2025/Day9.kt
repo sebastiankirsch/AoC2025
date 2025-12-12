@@ -38,12 +38,15 @@ class Day9(val redTiles: Array<Pair<Int, Int>>) {
         val charMap = prepareCharMap()
 
         var maxArea = 0L
+        var iteration = 0
         redTiles.forEachIndexed { i, firstPoint ->
             redTiles.forEachIndexed { j, secondPoint ->
                 if (i > j) {
+                    iteration++
                     val area = ((firstPoint.first - secondPoint.first).absoluteValue.toLong() + 1) *
                             ((firstPoint.second - secondPoint.second).absoluteValue + 1)
                     if (area > maxArea) {
+                        println("Iteration #${iteration++}| area: $area")
                         for (x in xRange(firstPoint, secondPoint)) {
                             for (y in yRange(firstPoint, secondPoint)) {
                                 if (charMap.charAt(x to y) == '.') {
@@ -66,7 +69,10 @@ class Day9(val redTiles: Array<Pair<Int, Int>>) {
         setGreenTiles(charMap)
         fillWithGreenTiles(charMap)
 
-        println(charMap)
+        println("CharMap prepared")
+        if (charMap.chars.size < 20) {
+            println(charMap)
+        }
         return charMap
     }
 
@@ -106,21 +112,22 @@ class Day9(val redTiles: Array<Pair<Int, Int>>) {
     }
 
     private fun fillWithGreenTiles(charMap: CharMap) {
-        val pointInBox = listOf(
-            redTiles[0].first + 1 to redTiles[0].second + 1,
-            redTiles[0].first + 1 to redTiles[0].second - 1,
-            redTiles[0].first - 1 to redTiles[0].second - 1,
-            redTiles[0].first - 1 to redTiles[0].second + 1,
-        ).first { charMap.isInBox(it) }
-        println("Point in box: $pointInBox")
-        paintGreen(charMap, pointInBox)
+        charMap.forEach { point, char -> if (char == '.' && charMap.isInBox(point)) charMap.setChar(point, '8') }
     }
 
     private fun paintGreen(charMap: CharMap, pointInBox: Pair<Int, Int>) {
-        charMap.fourNeighborsOf(pointInBox).filter { charMap.charAt(it) == '.' }.forEach {
-            charMap.setChar(it, 'X')
-            paintGreen(charMap, it)
-        }
+        val neighbors = mutableListOf(pointInBox)
+        var i = 0
+        do {
+            val newNeighbors =
+                neighbors.flatMap { point -> charMap.fourNeighborsOf(point).filter { charMap.charAt(it) == '.' } }
+            newNeighbors.forEach {
+                charMap.setChar(it, '0')
+            }
+            neighbors.clear()
+            neighbors.addAll(newNeighbors)
+            println("#${i++}|Neighbors: ${neighbors.size}")
+        } while (newNeighbors.isNotEmpty())
     }
 
     private fun xRange(firstPoint: Pair<Int, Int>, secondPoint: Pair<Int, Int>): IntRange =
@@ -132,10 +139,38 @@ class Day9(val redTiles: Array<Pair<Int, Int>>) {
 }
 
 private fun CharMap.isInBox(point: Pair<Int, Int>): Boolean {
-    val chars = mutableListOf<Char>()
-    var newY = point.second
-    do {
-        chars.add(charAt(point.first to newY))
-    } while (--newY > 0)
-    return chars.filter { it != '.' }.size % 2 == 1
+    if (!isWithinBounds(point)) {
+        return false
+    }
+    if (charAt(point) != '.') {
+        return true
+    }
+    val xDistanceTo0 = point.first
+    val xDistanceToEdge = chars[0].size - point.first
+    val yDistanceTo0 = point.second
+    val yDistanceToEdge = chars.size - point.second
+    val smallestDistance = minOf(xDistanceTo0, minOf(xDistanceToEdge, minOf(yDistanceTo0, yDistanceToEdge)))
+    val path = mutableListOf<Char>()
+    if (smallestDistance == xDistanceToEdge) {
+        var newX = point.first
+        while (++newX < chars[0].size) {
+            path.add(charAt(newX to point.second))
+        }
+    } else if (smallestDistance == xDistanceTo0) {
+        var newX = point.first
+        while (--newX >= 0) {
+            path.add(charAt(newX to point.second))
+        }
+    } else if (smallestDistance == yDistanceToEdge) {
+        var newY = point.second
+        while (++newY < chars.size) {
+            path.add(charAt(point.first to newY))
+        }
+    } else {
+        var newY = point.second
+        while (--newY >= 0) {
+            path.add(charAt(point.first to newY))
+        }
+    }
+    return path.filter { it == '#' || it == 'X' }.size % 2 == 1
 }
