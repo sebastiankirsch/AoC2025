@@ -9,11 +9,11 @@ class Day6Test {
     fun examplePart1() {
         val result = Day6(
             arrayOf(
-                intArrayOf(123, 328, 51, 64),
-                intArrayOf(45, 64, 387, 23),
-                intArrayOf(6, 98, 215, 314)
+                longArrayOf(123, 328, 51, 64),
+                longArrayOf(45, 64, 387, 23),
+                longArrayOf(6, 98, 215, 314)
             ),
-            arrayOf('*', '+', '*', '+')
+            charArrayOf('*', '+', '*', '+')
         ).grandTotal()
 
         assertEquals(4277556L, result)
