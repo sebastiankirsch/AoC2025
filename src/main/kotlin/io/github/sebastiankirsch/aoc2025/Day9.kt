@@ -67,7 +67,7 @@ class Day9(val redTiles: Array<Pair<Int, Int>>) {
         val charMap = buildCharMap()
         setRedTiles(charMap)
         setGreenTiles(charMap)
-        fillWithGreenTiles(charMap)
+        fillWithGreenTiles2(charMap)
 
         println("CharMap prepared")
         if (charMap.chars.size < 20) {
@@ -113,6 +113,33 @@ class Day9(val redTiles: Array<Pair<Int, Int>>) {
 
     private fun fillWithGreenTiles(charMap: CharMap) {
         charMap.forEach { point, char -> if (char == '.' && charMap.isInBox(point)) charMap.setChar(point, '8') }
+    }
+
+    private fun fillWithGreenTiles2(charMap: CharMap) {
+        charMap.chars.forEachIndexed { y, row ->
+            var inside = false
+            var onLine = false
+            var previousChar = '.'
+            row.forEachIndexed { x, char ->
+                if (char == '.') {
+                    if (onLine) {
+                        // upper neighbor dictates if we're in- or outside
+                        inside = charMap.charAt(x to y - 1) != '.'
+                        onLine = false
+                    }
+                    if (inside) {
+                        charMap.setChar(x to y, 'X')
+                    }
+                } else {
+                    if (previousChar != '.') {
+                        onLine = true
+                    } else {
+                        inside = !inside
+                    }
+                }
+                previousChar = char
+            }
+        }
     }
 
     private fun paintGreen(charMap: CharMap, pointInBox: Pair<Int, Int>) {
