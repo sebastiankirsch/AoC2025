@@ -1,6 +1,7 @@
 package io.github.sebastiankirsch.aoc2025
 
 import java.util.Scanner
+import kotlin.math.pow
 
 fun main() {
     val input = with(scannerForInputOf(object {}.javaClass)) {
@@ -40,8 +41,8 @@ class Day10(input: Array<Triple<BooleanArray, Array<IntArray>, IntArray>>) {
         value
     }.toIntArray()
 
-    val buttons = input.map {
-        it.second.map { buttons ->
+    val buttons = input.map { row ->
+        row.second.map { buttons ->
             var value = 0
             buttons.forEach { value += 1 shl it }
             value
@@ -51,7 +52,27 @@ class Day10(input: Array<Triple<BooleanArray, Array<IntArray>, IntArray>>) {
     fun fewestButtonPresses(): Int {
         printState()
 
-        TODO()
+        return indicators.mapIndexed { i, indicator ->
+            findFewestButtonPresses(indicator, buttons[i])
+        }.sum()
+    }
+
+    private fun findFewestButtonPresses(indicator: Int, buttons: IntArray): Int {
+        var fewestButtons = buttons.size
+        for (buttonPattern in 0..<2.0.pow(buttons.size).toInt()) {
+            var indicatorPattern = 0
+            var buttonsActive = 0
+            for (i in 0..<buttons.size) { // turn on buttons
+                if ((buttonPattern shr i) and 1 == 1) {
+                    indicatorPattern = indicatorPattern.xor(buttons[i])
+                    buttonsActive++
+                }
+            }
+            if (indicatorPattern == indicator && buttonsActive < fewestButtons) { // match found
+                fewestButtons = buttonsActive
+            }
+        }
+        return fewestButtons
     }
 
     private fun printState() {
